@@ -11,7 +11,7 @@ import (
 
 var (
 	baseDir          string
-	iniPath    			 string
+	iniPath          string
 
 	// Persistent configuration variables loaded from INI
 	apiURL           string
@@ -27,7 +27,12 @@ func init() {
 	if err != nil {
 		baseDir = "."
 	} else {
-		baseDir = filepath.Dir(rawExePath)
+		// Go compiler natively wraps the temporary binary inside a 'go-build' folder token context
+		if strings.Contains(rawExePath, "go-build") {
+			baseDir, _ = os.Getwd()
+		} else {
+			baseDir = filepath.Dir(rawExePath)
+		}
 	}
 
 	iniPath = filepath.Join(baseDir, "config.ini")
