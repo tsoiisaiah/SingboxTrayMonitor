@@ -30,17 +30,32 @@ func startProxy() {
 		_ = exec.Command("taskkill", "/F", "/PID", strconv.Itoa(spawnedPid)).Run()
 		spawnedPid = 0
 	}
+	
+	// Use absolue path to avoid issue on startup with windows
+	var absExePath, absConfigPath string
 
-	_, errExe := os.Stat(exePath)
-	_, errConfig := os.Stat(configPath)
+	if filepath.IsAbs(exePath) {
+		absExePath = exePath
+	} else {
+		absExePath = filepath.Join(baseDir, exePath)
+	}
+
+	if filepath.IsAbs(configPath) {
+		absConfigPath = configPath
+	} else {
+		absConfigPath = filepath.Join(baseDir, configPath)
+	}
+
+	_, errExe := os.Stat(absExePath)
+	_, errConfig := os.Stat(absConfigPath)
 	
 	if os.IsNotExist(errExe) || os.IsNotExist(errConfig) {
 		msg := "Warning: Invalid configuration paths detected!\n"
 		if os.IsNotExist(errExe) {
-			msg += fmt.Sprintf("- Core executable not found: %s\n", exePath)
+			msg += fmt.Sprintf("- Core executable not found: %s\n", absExePath)
 		}
 		if os.IsNotExist(errConfig) {
-			msg += fmt.Sprintf("- Configuration file not found: %s\n", configPath)
+			msg += fmt.Sprintf("- Configuration file not found: %s\n", absConfigPath)
 		}
 		msg += "\nPlease check and correct the paths in config.ini, then click Start Proxy again."
 		
@@ -50,9 +65,9 @@ func startProxy() {
 		mToggle.Enable()
 		return
 	}
-
-	cmd = exec.Command(exePath, "run", "-c", configPath)
-	cmd.Dir = filepath.Dir(exePath)
+	
+	cmd = exec.Command(absExePath, "run", "-c", absConfigPath)
+	cmd.Dir = filepath.Dir(absExePath)
 
 	if runtime.GOOS == "windows" {
 		cmd.SysProcAttr = &syscall.SysProcAttr{

@@ -1,17 +1,8 @@
 package main
 
-import (
-	"os"
+import (	
 	"github.com/energye/systray"
 )
-
-var (
-	baseDir string
-)
-
-func init() {
-	baseDir, _ = os.Getwd()
-}
 
 func main() {
 	MainRun()

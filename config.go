@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 var (
+	baseDir          string
 	iniPath    			 string
 
 	// Persistent configuration variables loaded from INI
@@ -21,11 +23,25 @@ var (
 )
 
 func init() {
+	rawExePath, err := os.Executable()
+	if err != nil {
+		baseDir = "."
+	} else {
+		baseDir = filepath.Dir(rawExePath)
+	}
+
 	iniPath = filepath.Join(baseDir, "config.ini")
 }
 
 func checkDashboardEnabled() bool {
-	data, err := ioutil.ReadFile(configPath)
+	var targetPath string
+	if filepath.IsAbs(configPath) {
+		targetPath = configPath
+	} else {
+		targetPath = filepath.Join(baseDir, configPath)
+	}
+
+	data, err := ioutil.ReadFile(targetPath)
 	if err != nil {
 		return false
 	}
