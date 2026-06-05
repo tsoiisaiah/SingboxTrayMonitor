@@ -113,6 +113,6 @@ func resetSystemProxy() {
 		return
 	}
 	internetSettingsKey := `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`
-	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyEnable", "/t", "REG_DWORD", "/d", "0", "/f").Run()
-	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyServer", "/t", "REG_SZ", "/d", "", "/f").Run()
+	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyEnable", "/t", "REG_DWORD", "/d", "0", "/f").Start()
+	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyServer", "/t", "REG_SZ", "/d", "", "/f").Start()
 }
