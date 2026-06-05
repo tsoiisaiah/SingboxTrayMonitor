@@ -4,13 +4,20 @@
 
 ---
 
-## Disclaimer
+## Usage
 
-1. **Personal Project**: This is a purely personal hobby project to fit my own specific networking workflows and requirements.
-2. **Tested Environment**: This tool has only been actively tested using Sing-box core version `1.13.13` running on a Windows 11 environment. Compatibility with other core versions or operating systems is not guaranteed.
-3. **No Warranty**: If anything breaks, causes network interruption, system instability, or data loss, it is entirely your own responsibility. The author holds absolute zero liability for any issues arising from the use of this tool.
+Download the [lastest release](https://github.com/tsoiisaiah/SingboxTrayMonitor/releases/latest), and put it together with `sing-box.exe`.
+
+You may also put it anywhere you want and update `config.ini`
 
 ---
+
+## Screenshoot
+
+![v1.0.0 Screenshot 1](assets/screenshot/screenshot01.png)
+
+![v1.0.0 Screenshot 2](assets/screenshot/screenshot02.png)
+
 
 ## Features
 
@@ -22,7 +29,8 @@
    One-click shortcut to open dashboard. `config.ini` will be scanned and disable if `external_ui` is not set.
 4. **Core and dashboard of your choice**  
    No dependency on core and dashboard, user can always use the core and dashboard of their choice.
-
+5. **Reset System Proxy**  
+   One click to reset proxy registry, useful if sing-box instance is killed unexpectedly.
 
 ---
 
@@ -74,5 +82,16 @@ go run .
 ```bash
 go build -ldflags="-w -s -H=windowsgui" -o SingboxTrayMonitor.exe .
 ```
+
+---
+
+## Disclaimer
+
+1. **Personal Project**:  
+This is a purely personal hobby project to fit my own specific networking workflows and requirements.
+2. **Tested Environment**:  
+This tool has only been actively tested using Sing-box core version `1.13.13` running on a Windows 11 environment. Compatibility with other core versions or operating systems is not guaranteed.
+3. **No Warranty**:  
+If anything breaks, causes network interruption, system instability, or data loss, it is entirely your own responsibility. The author holds absolute zero liability for any issues arising from the use of this tool.
 
 ---
