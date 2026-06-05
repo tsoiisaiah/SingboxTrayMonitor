@@ -24,7 +24,7 @@ jobs:
 
       - name: Compile and Package Production Binary
         run: |
-          make build TAG=${{ github.ref_name }} REPO_URL=${{ github.server_url }}/${{ github.repository }}
+          make build TAG=${{ github.ref_name }} HOMEPAGE_URL=${{ github.server_url }}/${{ github.repository }}
 
       - name: Compress Executable into Zip Archive
         run: |
