@@ -4,6 +4,11 @@ import (
 	"github.com/energye/systray"
 )
 
+var (
+	appVersion = "dev"
+	homepageURL  = "https://github.com/tsoiisaiah/SingboxTrayMonitor" 
+)
+
 func main() {
 	MainRun()
 }

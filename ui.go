@@ -80,7 +80,15 @@ func setupUI() {
 	mKeepAlive = mSettings.AddSubMenuItemCheckbox("Keep Alive", "Restart sing-box automatically if it crashes", keepAlive)
 	mStartWithWin = mSettings.AddSubMenuItemCheckbox("Start with Windows", "Launch automatically on Windows startup", startWithWindows)
 
+	mTool := systray.AddMenuItem("Tool", "Utility debugging tools")
+	mResetSysProxy := mTool.AddSubMenuItem("Reset System Proxy", "Force turn off windows system proxy settings")
+
 	systray.AddSeparator()
+
+	mVersion := systray.AddMenuItem("Version: "+appVersion, "Click to visit release page")
+
+	systray.AddSeparator()
+
 	mQuit := systray.AddMenuItem("Exit", "Stop core and exit application")
 
 	mToggle.Click(func() {
@@ -136,6 +144,17 @@ func setupUI() {
 			toggleWindowsStartup(false)
 		}
 		saveConfig()
+	})
+	
+	mResetSysProxy.Click(func() {
+		if isSingboxAlive() {
+			stopProxy()
+		}
+		resetSystemProxy()
+	})
+	
+	mVersion.Click(func() {
+		openDashboardURL(homepageURL)
 	})
 
 	mQuit.Click(func() {

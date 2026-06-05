@@ -22,13 +22,9 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Install Windows Resource Compiler Toolkit
-        run: |
-          make build
-
       - name: Compile and Package Production Binary
         run: |
-          make build
+          make build TAG=${{ github.ref_name }} REPO_URL=${{ github.server_url }}/${{ github.repository }}
 
       - name: Compress Executable into Zip Archive
         run: |
