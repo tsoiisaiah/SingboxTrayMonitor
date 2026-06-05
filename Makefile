@@ -8,6 +8,7 @@ run:
 	go run .
 
 build:
+	go run github.com/akavel/rsrc@latest -manifest manifest.xml -ico assets/online.ico -o rsrc.syso
 	go build -ldflags="-w -s -H=windowsgui" -o $(BINARY_NAME) .
 
 clean:
