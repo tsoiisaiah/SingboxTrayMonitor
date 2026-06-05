@@ -22,6 +22,7 @@ func processCleanUp()	{
 			fmt.Printf("Killing sing-box child process (PID: %d)...\n", spawnedPid)
 			_ = exec.Command("taskkill", "/F", "/PID", strconv.Itoa(spawnedPid)).Run()
 		}
+		resetSystemProxy()
 		fmt.Println("Sing-box tray monitor stopped.")
 }
 
@@ -93,6 +94,8 @@ func stopProxy() {
 			_ = exec.Command("taskkill", "/F", "/IM", "sing-box.exe").Run()
 		}
 	}
+
+	resetSystemProxy()
 }
 
 func isSingboxAlive() bool {
@@ -103,4 +106,13 @@ func isSingboxAlive() bool {
 		return true
 	}
 	return false
+}
+
+func resetSystemProxy() {
+	if runtime.GOOS != "windows" {
+		return
+	}
+	internetSettingsKey := `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`
+	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyEnable", "/t", "REG_DWORD", "/d", "0", "/f").Run()
+	_ = exec.Command("reg", "add", internetSettingsKey, "/v", "ProxyServer", "/t", "REG_SZ", "/d", "", "/f").Run()
 }
