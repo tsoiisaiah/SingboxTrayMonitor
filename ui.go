@@ -20,7 +20,9 @@ var (
 	mDashboard *systray.MenuItem
 	isRunning  bool
 	iconGreen  []byte
-	iconRed    []byte
+	iconRed   []byte
+	
+	isProcessing bool 
 
 	// Submenu items under Settings
 	mAutoConnect  *systray.MenuItem
@@ -92,16 +94,18 @@ func setupUI() {
 	mQuit := systray.AddMenuItem("Exit", "Stop core and exit application")
 
 	mToggle.Click(func() {
+		isProcessing = true
 		mToggle.Disable()
-		mToggle.SetTitle("Processing...")
-
-		loadAndSyncConfig()
 
 		if !isRunning {
+			mToggle.SetTitle("Starting...")
 			startProxy()
 		} else {
+			mToggle.SetTitle("Stopping...")
 			stopProxy()
 		}
+
+		loadAndSyncConfig()
 
 		select {
 		case fastCheckCh <- true:
@@ -182,7 +186,15 @@ func setupUI() {
 			case <-fastCheckCh:
 				for i := 0; i < 4; i++ {
 					time.Sleep(500 * time.Millisecond)
-					checkStatusAndUpdateUI()
+					
+					// If the background target state has already settled early, break out to release UI instantly
+					alive := isSingboxAlive()
+					if (isProcessing && !isRunning && alive) || (isProcessing && isRunning && !alive) {
+						syncUIState(alive)
+						break
+					}
+					
+					syncUIState(alive)
 				}
 			}
 		}
@@ -190,12 +202,25 @@ func setupUI() {
 }
 
 func checkStatusAndUpdateUI() {
-	if isSingboxAlive() {
+	if isProcessing {
+		return
+	}
+
+	// Launch an isolated, lightweight concurrent Goroutine task handle to drop UI blocking thread
+	go func() {
+		alive := isSingboxAlive()
+		syncUIState(alive)
+	}()
+}
+
+func syncUIState(alive bool) {
+	if alive {
 		isRunning = true
 		if len(iconGreen) > 0 {
 			systray.SetIcon(iconGreen)
 		}
 		mToggle.SetTitle("Stop Proxy")
+		isProcessing = false
 		mToggle.Enable() 
 	} else {
 		isRunning = false
@@ -203,6 +228,7 @@ func checkStatusAndUpdateUI() {
 			systray.SetIcon(iconRed)
 		}
 		mToggle.SetTitle("Start Proxy")
+		isProcessing = false
 		mToggle.Enable()
 	}
 }
