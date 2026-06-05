@@ -19,17 +19,19 @@ You may also put it anywhere you want and update `config.ini`
 ![v1.0.0 Screenshot 2](assets/screenshot/screenshot02.png)
 
 
-## Features
+## Core Features
 
 1. **Monitor Singbox process**  
    Monitor singbox process, support auto start and keep alive functionality.
-2. **Simple UI for the basics**  
+2. **Status Tray Icon**  
+   Tray icon reflecting the sing-box status
+3. **Simple UI for the basics**  
    Simple UI to achieve basic need to interact with Sing-box.
-3. **Dashboard shortcut**  
+4. **Dashboard shortcut**  
    One-click shortcut to open dashboard. `config.ini` will be scanned and disable if `external_ui` is not set.
-4. **Core and dashboard of your choice**  
+5. **Portable, Core and dashboard of your choice**  
    No dependency on core and dashboard, user can always use the core and dashboard of their choice.
-5. **Reset System Proxy**  
+6. **Reset System Proxy**  
    One click to reset proxy registry, useful if sing-box instance is killed unexpectedly.
 
 ---
