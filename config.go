@@ -38,6 +38,12 @@ func init() {
 	iniPath = filepath.Join(baseDir, "config.ini")
 }
 
+func setupConfig() {
+	loadAndSyncConfig()
+	// Force update registry
+	toggleWindowsStartup(startWithWindows)
+}
+
 func checkDashboardEnabled() bool {
 	var targetPath string
 	if filepath.IsAbs(configPath) {

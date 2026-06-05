@@ -18,9 +18,11 @@ func MainRun() {
 }
 
 func onReady() {
-	setupUI();
+	// Always load config first
+	setupConfig()
+	setupUI()
 }
 
 func onExit() {
-	processCleanUp();
+	processCleanUp()
 }

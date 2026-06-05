@@ -35,8 +35,6 @@ func setupUI() {
 
 	fastCheckCh = make(chan bool, 1)
 
-	loadAndSyncConfig()
-
 	iconGreen, _ = assetFiles.ReadFile("assets/online.ico")
 	iconRed, _ = assetFiles.ReadFile("assets/offline.ico")
 

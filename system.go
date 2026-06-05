@@ -16,10 +16,10 @@ func toggleWindowsStartup(register bool) {
 	appName := "SingboxTrayMonitor"
 
 	if register {
-		_ = exec.Command("reg", "add", keyPath, "/v", appName, "/t", "REG_SZ", "/d", exe, "/f").Run()
+		_ = exec.Command("reg", "add", keyPath, "/v", appName, "/t", "REG_SZ", "/d", exe, "/f").Start()
 		fmt.Println("Registered to Windows Startup Registry successfully.")
 	} else {
-		_ = exec.Command("reg", "delete", keyPath, "/v", appName, "/f").Run()
+		_ = exec.Command("reg", "delete", keyPath, "/v", appName, "/f").Start()
 		fmt.Println("Removed from Windows Startup Registry successfully.")
 	}
 }
@@ -27,10 +27,10 @@ func toggleWindowsStartup(register bool) {
 func triggerSystemPopup(title, message string) {
 	switch runtime.GOOS {
 	case "windows":
-		_ = exec.Command("msg", "*", "/TIME:10", message).Run()
+		_ = exec.Command("msg", "*", "/TIME:10", message).Start()
 	case "darwin":
 		script := fmt.Sprintf("display dialog %q with title %q buttons {\"確定\"} default button \"確定\" with icon caution", message, title)
-		_ = exec.Command("osascript", "-e", script).Run()
+		_ = exec.Command("osascript", "-e", script).Start()
 	default:
 		_ = exec.Command("zenity", "--warning", "--title="+title, "--text="+message, "--width=400").Start()
 	}
