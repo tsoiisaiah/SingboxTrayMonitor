@@ -27,7 +27,8 @@ var (
 
 	// Submenu items under Settings
 	mAutoConnect  *systray.MenuItem
-	mKeepAlive    *systray.MenuItem
+	mKeepAlive        *systray.MenuItem
+	keepAliveRetryCount int
 	mStartWithWin *systray.MenuItem
 )
 
@@ -97,6 +98,7 @@ func setupUI() {
 
 		if !isRunning {
 			mToggle.SetTitle("Starting...")
+			keepAliveRetryCount = 0
 			startProxy()
 		} else {
 			mToggle.SetTitle("Stopping...")
@@ -178,8 +180,21 @@ func setupUI() {
 				checkStatusAndUpdateUI()
 				
 				if keepAlive && spawnedPid > 0 && !isSingboxAlive() {
-					fmt.Println("Keep Alive triggered: Sing-box went offline unexpectedly. Restarting...")
-					startProxy()
+					if keepAliveRetryCount < 0 {
+						// Do nothing, stop retrying
+					} else if keepAliveRetryCount < 5 {
+						// 2. Retry logic (0 to 4)
+						keepAliveRetryCount++
+						fmt.Printf("Keep Alive triggered: Attempt %d/5. Restarting...\n", keepAliveRetryCount)
+						startProxy()
+					} else {
+						// 3. Abort state (counter == 5)
+						go triggerSystemPopup(
+							"Keep Alive Error",
+							fmt.Sprintf("Failed to restart Sing-box after %d consecutive attempts. Please check your configuration or try starting manually.", keepAliveRetryCount),
+						)
+						keepAliveRetryCount = -1 // Mark as aborted
+					}
 				}
 			case <-fastCheckCh:
 				for i := 0; i < 4; i++ {
@@ -214,6 +229,7 @@ func checkStatusAndUpdateUI() {
 func syncUIState(alive bool) {
 	if alive {
 		isRunning = true
+		keepAliveRetryCount = 0 // Reset counter when proxy successfully comes back online
 		if len(iconGreen) > 0 {
 			systray.SetIcon(iconGreen)
 		}
