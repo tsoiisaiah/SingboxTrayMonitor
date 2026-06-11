@@ -17,7 +17,8 @@ var (
 	fastCheckCh chan bool
 
 	mToggle    *systray.MenuItem
-	mDashboard *systray.MenuItem
+	mDashboard   *systray.MenuItem
+	dashboardEnabled bool
 	isRunning  bool
 	iconGreen  []byte
 	iconRed   []byte
@@ -68,9 +69,8 @@ func setupUI() {
 	mToggle.Disable()
 
 	mDashboard = systray.AddMenuItem("Open Dashboard", "Open MetaCubeXD web dashboard")
-	if checkDashboardEnabled() {
-		mDashboard.Enable()
-	} else {
+	dashboardEnabled = checkDashboardEnabled()
+	if !dashboardEnabled {
 		mDashboard.Disable()
 		mDashboard.SetTooltip("Dashboard is disabled in your config.json")
 	}
@@ -219,7 +219,10 @@ func syncUIState(alive bool) {
 		}
 		mToggle.SetTitle("Stop Proxy")
 		isProcessing = false
-		mToggle.Enable() 
+		mToggle.Enable()
+		if dashboardEnabled {
+			mDashboard.Enable()
+		}
 	} else {
 		isRunning = false
 		if len(iconRed) > 0 {
@@ -228,6 +231,9 @@ func syncUIState(alive bool) {
 		mToggle.SetTitle("Start Proxy")
 		isProcessing = false
 		mToggle.Enable()
+		if dashboardEnabled {
+			mDashboard.Disable()
+		}
 	}
 }
 
