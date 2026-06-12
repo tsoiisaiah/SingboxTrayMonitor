@@ -36,10 +36,10 @@ func triggerSystemPopup(title, message string) {
 		
 		// MessageBoxW (HWND, Text, Title, Flags)
 		ret, _, err := p.Call(0, uintptr(unsafe.Pointer(uMsg)), uintptr(unsafe.Pointer(uTitle)), 0x40)
-		if err != nil {
-			fmt.Printf("[SysPopup] Windows Error: %v\n", err)
-		} else if ret == 0 {
-			fmt.Printf("[SysPopup] Popup failed (ret=%d)\n", ret)
+		if ret == 0 {
+			fmt.Printf("[SysPopup] Popup Error (ret=0): %v\n", err)
+		} else {
+			fmt.Println("[SysPopup] Popup displayed successfully.")
 		}
 
 	case "darwin":
