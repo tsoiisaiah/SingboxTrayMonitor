@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"syscall"
+	"unsafe"
 )
 
 func toggleWindowsStartup(register bool) {
@@ -27,9 +29,21 @@ func toggleWindowsStartup(register bool) {
 func triggerSystemPopup(title, message string) {
 	switch runtime.GOOS {
 	case "windows":
-		_ = exec.Command("msg", "*", "/TIME:10", message).Start()
+		h, _ := syscall.LoadDLL("user32.dll")
+		p, _ := h.FindProc("MessageBoxW")
+		uTitle := syscall.StringToUTF16Ptr(title)
+		uMsg := syscall.StringToUTF16Ptr(message)
+		
+		// MessageBoxW (HWND, Text, Title, Flags)
+		ret, _, err := p.Call(0, uintptr(unsafe.Pointer(uMsg)), uintptr(unsafe.Pointer(uTitle)), 0x40)
+		if err != nil {
+			fmt.Printf("[SysPopup] Windows Error: %v\n", err)
+		} else if ret == 0 {
+			fmt.Printf("[SysPopup] Popup failed (ret=%d)\n", ret)
+		}
+
 	case "darwin":
-		script := fmt.Sprintf("display dialog %q with title %q buttons {\"確定\"} default button \"確定\" with icon caution", message, title)
+		script := fmt.Sprintf("display dialog %q with title %q buttons {\"OK\"} default button \"OK\" with icon caution", message, title)
 		_ = exec.Command("osascript", "-e", script).Start()
 	default:
 		_ = exec.Command("zenity", "--warning", "--title="+title, "--text="+message, "--width=400").Start()
